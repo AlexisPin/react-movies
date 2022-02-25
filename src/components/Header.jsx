@@ -16,7 +16,7 @@ const Header = () => {
             to="/favorites"
             className={(nav) => (nav.isActive ? "nav-active" : "")}
           >
-            <li>Favories</li>
+            <li>Favoris</li>
           </NavLink>
         </ul>
       </nav>

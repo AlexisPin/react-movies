@@ -1,7 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 import apiConfig from "../api/apiConfig";
+import FavoritesContext from "../store/favoritesMovies";
 
 const Card = ({ movie }) => {
+  const favoritesCtx = useContext(FavoritesContext);
+  let movieIsFavorite = favoritesCtx.movieIsFavorite(movie.id);
+  const toggleFavoriteStatusHandler = () => {
+    if (movieIsFavorite) {
+      favoritesCtx.removeFavorite(movie.id);
+      //localStorage.movies = [favoritesCtx.favorites];
+    } else {
+      favoritesCtx.addFavorite(movie.id);
+      //localStorage.movies = [favoritesCtx.favorites];
+    }
+  };
+  localStorage.movies = favoritesCtx.favorites;
   const dateFormater = (date) => {
     let [year, month, day] = date.split("-");
     let newDate = [day, month, year].join("/");
@@ -76,17 +89,6 @@ const Card = ({ movie }) => {
     return genreArray.map((genre) => <li key={genre}>{genre}</li>);
   };
 
-  const addToFavorites = () => {
-    if (localStorage.movies != null) {
-      let favorites = localStorage.movies;
-      if (!favorites.includes(movie.id)) {
-        localStorage.movies = [favorites, movie.id];
-      }
-    } else {
-      window.localStorage.movies = [movie.id];
-    }
-  };
-  const removeFromFavorites = () => {};
   return (
     <div className="card">
       <img
@@ -112,15 +114,11 @@ const Card = ({ movie }) => {
       {movie.overview ? <h3>Synopsis : </h3> : ""}
       <p>{movie.overview}</p>
 
-      {movie.genre_ids ? (
-        <div className="btn" onClick={() => addToFavorites()}>
-          Ajouter aux favoris <span>❤️</span>
-        </div>
-      ) : (
-        <div className="btn" onClick={() => removeFromFavorites()}>
-          Supprimer des favoris <span>💔</span>
-        </div>
-      )}
+      <div className="btn" onClick={toggleFavoriteStatusHandler}>
+        {movieIsFavorite
+          ? "Supprimer des favoris 💔"
+          : "Ajouter aux favoris ❤️"}
+      </div>
     </div>
   );
 };

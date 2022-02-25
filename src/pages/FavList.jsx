@@ -1,18 +1,21 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import apiConfig from "../api/apiConfig";
 import Card from "../components/Card";
 import Header from "../components/Header";
+import FavoritesContext from "../store/favoritesMovies";
 
 const FavList = () => {
+  const favoritesCtx = useContext(FavoritesContext);
   const [favoritesMovies, setFavoritesMovies] = useState([]);
   useEffect(() => {
-    let moviesID = localStorage.movies ? localStorage.movies.split(",") : [];
+    let moviesId = favoritesCtx.favorites;
+    setFavoritesMovies([]);
 
-    for (let i = 0; i < moviesID.length; i++) {
+    for (let i = 0; i < moviesId.length; i++) {
       axios
         .get(
-          `${apiConfig.base}movie/${moviesID[i]}?api_key=${apiConfig.key}&language=fr-FR`
+          `${apiConfig.base}movie/${moviesId[i]}?api_key=${apiConfig.key}&language=fr-FR`
         )
         .then((res) =>
           setFavoritesMovies((favoritesMovies) => [
@@ -21,17 +24,19 @@ const FavList = () => {
           ])
         );
     }
-  }, []);
+  }, [favoritesCtx.favorites]);
 
   return (
     <div className="user-list-page">
       <Header />
-      <h2>Favories</h2>
+      <h2>{favoritesMovies.length > 1 ? "Favoris" : "Favori"}</h2>
       <div className="result">
         {favoritesMovies.length > 0 ? (
-          favoritesMovies.map((movie) => <Card movie={movie} key={movie.id} />)
+          favoritesMovies.map((movie, index) => (
+            <Card movie={movie} key={index} />
+          ))
         ) : (
-          <h2>Vous n'avez pas de films ajoutés aux favories</h2>
+          <h2>Vous n'avez pas de films ajoutés aux favoris</h2>
         )}
       </div>
     </div>

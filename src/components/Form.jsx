@@ -50,9 +50,9 @@ const Form = () => {
       <div className="result">
         {movies
           .sort((a, b) => {
-            if (sortType == "goodToBad") {
+            if (sortType === "goodToBad") {
               return b.vote_average - a.vote_average;
-            } else if (sortType == "badToGood") {
+            } else if (sortType === "badToGood") {
               return a.vote_average - b.vote_average;
             }
           })
